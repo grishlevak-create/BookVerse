@@ -1,0 +1,110 @@
+# Supabase для сборки Pages: .env.production (приватный репозиторий).
+
+stages:
+  - install
+  - build
+  - quality
+  - deploy
+
+variables:
+  NODE_OPTIONS: --max-old-space-size=4096
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "homework" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "homework"'
+    - when: never
+
+.homework-rules:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "homework" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "homework"'
+    - when: never
+
+.homework-deploy-rules:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME == "homework" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "homework"'
+    - when: never
+
+default:
+  image: node:20-bookworm-slim
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
+    - npm config set cache .npm --location=project
+    - npm ci --ignore-scripts --prefer-offline --no-audit --no-fund
+
+install:
+  stage: install
+  script:
+    - npm ci --ignore-scripts --prefer-offline --no-audit --no-fund
+  extends: .homework-rules
+
+build:
+  stage: build
+  variables:
+    VITE_BASE_PATH: '/$CI_PROJECT_PATH/'
+  script:
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+  extends: .homework-rules
+
+format:
+  stage: quality
+  script:
+    - npm run format:check
+  extends: .homework-rules
+
+eslint:
+  stage: quality
+  script:
+    - npm run lint
+  extends: .homework-rules
+
+test:
+  stage: quality
+  script:
+    - npm run test:ci
+  coverage: '/All files\s*\|\s*([\d\.]+)/'
+  extends: .homework-rules
+
+types:
+  stage: quality
+  script:
+    - npm run typecheck
+  extends: .homework-rules
+
+pages:
+  stage: deploy
+  before_script: []
+  needs:
+    - job: build
+      artifacts: true
+    - job: format
+      artifacts: false
+    - job: eslint
+      artifacts: false
+    - job: test
+      artifacts: false
+    - job: types
+      artifacts: false
+  script:
+    - rm -rf public
+    - mkdir public
+    - cp -r dist/* public/
+    - cp public/index.html public/404.html
+  artifacts:
+    paths:
+      - public
+  environment:
+    name: production
+    url: $CI_PAGES_URL
+  extends: .homework-deploy-rules
