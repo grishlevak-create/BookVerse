@@ -30,7 +30,7 @@
 
 Адаптивная вёрстка: боковое меню на десктопе, нижняя навигация на мобильных.
 
-**Наблюдаемость (опционально):** Sentry — ошибки в браузере; PostHog — просмотры страниц, поиск, избранное. Ключи в `.env` / CI Variables (`VITE_SENTRY_DSN`, `VITE_POSTHOG_KEY`). Дашборды: [sentry.io](https://sentry.io) → Issues; [PostHog](https://eu.posthog.com) → Activity → Live events.
+**Наблюдаемость:** [Яндекс.Метрика](https://metrika.yandex.ru) — визиты, цели (`book_search`, `favorite`), ошибки (`js_error`). Переменная `VITE_YANDEX_METRIKA_ID` в `.env` / `.env.production`.
 
 ## Ссылки
 
@@ -38,8 +38,8 @@
 |--------|-----|
 | **GitLab (сдача курса)** | https://gitlab.education.tbank.ru/frontend-academy-2-2026/homework-forks/grigoriy.levakov/final-project-2-semester |
 | **Демо GitLab Pages** | см. **Deploy → Pages** в GitLab (путь fork: `/homework-forks/grigoriy.levakov/final-project-2-semester/`) |
-| **GitHub** | https://github.com/ВАШ_ЛОГИН/ИМЯ_РЕПО |
-| **Демо GitHub Pages** | https://ВАШ_ЛОГИН.github.io/ИМЯ_РЕПО/ |
+| **GitHub** | https://github.com/grishlevak-create/BookVerse |
+| **Демо GitHub Pages** | https://grishlevak-create.github.io/BookVerse/ |
 
 ## Тестовый аккаунт
 
@@ -72,13 +72,13 @@ src/
 
 1. Клонируйте репозиторий и перейдите в каталог проекта.
 
-2. Скопируйте `.env.example` в `.env`, укажите `VITE_SUPABASE_URL` и `VITE_SUPABASE_ANON_KEY` (Supabase → Settings → API).
+2. Скопируйте `.env.example` в `.env`. Укажите `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` и при необходимости `VITE_YANDEX_METRIKA_ID` (Supabase → Settings → API; счётчик — [metrika.yandex.ru](https://metrika.yandex.ru)).
 
 3. В Supabase SQL Editor выполните по порядку:
    - `docs/supabase/schema.sql`
    - при ошибках 403 на REST — `docs/supabase/grants-fix.sql`
 
-4. в Supabase отключите Confirm email в настройках Email.
+4. В Supabase отключите Confirm email в настройках Email.
 
 5. Установка и запуск:
 
@@ -93,7 +93,7 @@ npm run dev
 
 Файл `.gitlab-ci.yml`: **lint** → **unit_tests** → **pages** (ветка по умолчанию).
 
-Supabase для сборки **GitLab Pages**: ключи в `.env.production` (приватный репозиторий; client-side ключи). Локально — `.env` из `.env.example`.
+Ключи для сборки стенда — в `.env.production`. Локально — `.env` из `.env.example`.
 
 GitHub: `.github/workflows/ci.yml` (lint, test), `.github/workflows/pages.yml` (Pages).  
 После первого push: **Settings → Pages → Source: GitHub Actions**. Supabase: в URL Configuration добавить оба URL стенда (GitLab и GitHub).
@@ -104,7 +104,7 @@ GitHub: `.github/workflows/ci.yml` (lint, test), `.github/workflows/pages.yml` (
 
 ## Переменные окружения
 
-См. `.env.example`: Supabase (обязательно), Sentry и PostHog (метрики, опционально).
+См. `.env.example`: Supabase (обязательно), Яндекс.Метрика (опционально).
 
 ## Лицензии данных
 

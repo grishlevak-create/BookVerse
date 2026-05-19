@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { capturePageView, initAnalytics } from '@/shared/lib/analytics';
 
-export function PostHogRouteListener() {
+export function MetrikaRouteListener() {
   const location = useLocation();
 
   useEffect(() => {

@@ -3,9 +3,7 @@ import { z } from 'zod';
 const schema = z.object({
   VITE_SUPABASE_URL: z.string().optional().default(''),
   VITE_SUPABASE_ANON_KEY: z.string().optional().default(''),
-  VITE_SENTRY_DSN: z.string().optional().default(''),
-  VITE_POSTHOG_KEY: z.string().optional().default(''),
-  VITE_POSTHOG_HOST: z.string().optional().default('https://eu.i.posthog.com'),
+  VITE_YANDEX_METRIKA_ID: z.string().optional().default(''),
 });
 
 export type AppEnv = z.infer<typeof schema>;

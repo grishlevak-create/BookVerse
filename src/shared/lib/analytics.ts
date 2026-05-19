@@ -1,42 +1,47 @@
-import posthog from 'posthog-js';
+import { callMetrika, getMetrikaCounterId, isMetrikaEnabled } from '@/shared/lib/yandex-metrika';
 
-import { env } from '@/shared/config/env';
-
-let posthogReady = false;
+let initialized = false;
 
 export function initAnalytics(): void {
-  if (posthogReady) return;
-  const key = env.VITE_POSTHOG_KEY.trim();
-  if (!key) return;
-  posthog.init(key, {
-    api_host: env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com',
-    capture_pageview: false,
-    persistence: 'localStorage',
+  if (initialized || !isMetrikaEnabled()) return;
+  initialized = true;
+  callMetrika('init', {
+    clickmap: true,
+    trackLinks: true,
+    accurateTrackBounce: true,
+    webvisor: false,
   });
-  posthogReady = true;
 }
 
 export function capturePageView(path: string): void {
-  if (!env.VITE_POSTHOG_KEY.trim()) return;
-  posthog.capture('$pageview', { path });
+  if (!isMetrikaEnabled()) return;
+  const url = path.startsWith('http') ? path : `${window.location.origin}${path}`;
+  callMetrika('hit', url, { title: document.title });
 }
 
 export function captureSearch(query: string): void {
-  if (!env.VITE_POSTHOG_KEY.trim()) return;
-  posthog.capture('book_search', { query });
+  if (!isMetrikaEnabled()) return;
+  callMetrika('reachGoal', 'book_search', { query });
 }
 
 export function captureFavorite(action: 'add' | 'remove', bookId: string): void {
-  if (!env.VITE_POSTHOG_KEY.trim()) return;
-  posthog.capture('favorite', { action, bookId });
+  if (!isMetrikaEnabled()) return;
+  callMetrika('reachGoal', 'favorite', { action, bookId });
 }
 
 export function identifyUser(userId: string, traits?: Record<string, string>): void {
-  if (!env.VITE_POSTHOG_KEY.trim()) return;
-  posthog.identify(userId, traits);
+  if (!isMetrikaEnabled()) return;
+  callMetrika('userParams', { UserID: userId, ...traits });
 }
 
-export function resetAnalytics(): void {
-  if (!env.VITE_POSTHOG_KEY.trim()) return;
-  posthog.reset();
+export function captureError(message: string, details?: Record<string, string>): void {
+  if (!isMetrikaEnabled()) return;
+  const id = getMetrikaCounterId();
+  callMetrika('reachGoal', 'js_error', {
+    message: message.slice(0, 500),
+    ...details,
+    counter: String(id ?? ''),
+  });
 }
+
+export function resetAnalytics(): void {}

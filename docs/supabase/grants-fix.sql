@@ -1,5 +1,5 @@
--- BookVerse: исправление HTTP 403 на profiles, favorites, collections…
--- Выполните в Supabase → SQL Editor → Run (один раз, если уже запускали schema.sql без GRANT).
+-- BookVerse — права REST API (роли anon / authenticated)
+-- Supabase → SQL Editor → Run (если schema.sql уже выполнялся без GRANT)
 
 grant usage on schema public to anon, authenticated;
 

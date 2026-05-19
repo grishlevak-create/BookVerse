@@ -1,19 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as Sentry from '@sentry/react';
 
 import { App } from '@/app/App';
 import '@/app/styles/index.css';
-import { env } from '@/shared/config/env';
+import { initErrorMonitoring } from '@/shared/lib/error-monitoring';
 
-const dsn = env.VITE_SENTRY_DSN.trim();
-if (dsn) {
-  Sentry.init({
-    dsn,
-    integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: 0.15,
-  });
-}
+initErrorMonitoring();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

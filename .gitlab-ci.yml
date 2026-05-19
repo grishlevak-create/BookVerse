@@ -1,4 +1,4 @@
-# Supabase для сборки Pages: .env.production (приватный репозиторий).
+# BookVerse CI — ветка homework → master
 
 stages:
   - install

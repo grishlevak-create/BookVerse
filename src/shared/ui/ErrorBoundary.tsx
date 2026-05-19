@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 import { ru } from '@/shared/i18n';
+import { reportClientError } from '@/shared/lib/error-monitoring';
 
 import { Button } from './Button';
 
@@ -22,7 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught:', error, errorInfo);
+    reportClientError(error.message, error.stack, `ErrorBoundary:${errorInfo.componentStack?.slice(0, 200) ?? ''}`);
   }
 
   private handleReset = () => {

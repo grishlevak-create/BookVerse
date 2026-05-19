@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
+jest.mock('@/shared/lib/error-monitoring', () => ({
+  reportClientError: jest.fn(),
+}));
+
 function Boom(): null {
   throw new Error('test-error');
 }

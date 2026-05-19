@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 
 import { AppProviders } from '@/app/providers/AppProviders';
-import { PostHogRouteListener } from '@/app/providers/PostHogRouteListener';
+import { MetrikaRouteListener } from '@/app/providers/MetrikaRouteListener';
 import { AppRouter } from '@/app/router/AppRouter';
 import { ErrorBoundary } from '@/shared/ui';
 
@@ -15,7 +15,7 @@ export function App() {
   return (
     <AppProviders>
       <BrowserRouter basename={routerBasename()}>
-        <PostHogRouteListener />
+        <MetrikaRouteListener />
         <ErrorBoundary>
           <AppRouter />
         </ErrorBoundary>
