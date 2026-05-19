@@ -23,7 +23,11 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    reportClientError(error.message, error.stack, `ErrorBoundary:${errorInfo.componentStack?.slice(0, 200) ?? ''}`);
+    reportClientError(
+      error.message,
+      error.stack,
+      `ErrorBoundary:${errorInfo.componentStack?.slice(0, 200) ?? ''}`,
+    );
   }
 
   private handleReset = () => {
