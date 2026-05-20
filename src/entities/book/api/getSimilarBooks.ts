@@ -6,8 +6,15 @@ type OlSubjectResponse = {
   works?: OlSubjectWork[];
 };
 
+function normalizeSubjectKey(subject: string): string {
+  const trimmed = subject.trim();
+  const fromUrl = trimmed.match(/openlibrary\.org\/subjects\/([^/?#]+)/i);
+  if (fromUrl?.[1]) return decodeURIComponent(fromUrl[1]);
+  return trimmed;
+}
+
 export async function getSimilarBooks(subject: string) {
-  const key = subject.trim();
+  const key = normalizeSubjectKey(subject);
   if (!key) return [];
 
   const path = `/subjects/${encodeURIComponent(key)}.json?details=false&limit=24`;

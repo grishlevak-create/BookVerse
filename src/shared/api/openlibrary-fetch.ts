@@ -1,12 +1,29 @@
-import { ensureOpenLibraryHttps, upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
+import { ensureOpenLibraryHttps } from '@/shared/lib/secure-url';
 
 const OPEN_LIBRARY_ORIGIN = 'https://openlibrary.org';
 
-function resolveOpenLibraryUrl(path: string): string {
-  const resolved = path.startsWith('http')
-    ? (upgradeHttpToHttpsOnSecurePage(path) ?? path)
-    : `${OPEN_LIBRARY_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
-  return ensureOpenLibraryHttps(resolved);
+function isOpenLibraryHost(hostname: string): boolean {
+  return hostname === 'openlibrary.org' || hostname.endsWith('.openlibrary.org');
+}
+
+export function resolveOpenLibraryUrl(path: string): string {
+  const trimmed = path.trim();
+  const absolute = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `${OPEN_LIBRARY_ORIGIN}${trimmed.startsWith('/') ? '' : '/'}${trimmed}`;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(absolute);
+  } catch {
+    return ensureOpenLibraryHttps(absolute);
+  }
+
+  if (parsed.protocol === 'http:' && isOpenLibraryHost(parsed.hostname)) {
+    parsed.protocol = 'https:';
+  }
+
+  return ensureOpenLibraryHttps(parsed.toString());
 }
 
 export class OpenLibraryHttpError extends Error {

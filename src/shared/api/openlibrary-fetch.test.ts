@@ -1,4 +1,8 @@
-import { OpenLibraryHttpError, openLibraryFetch } from '@/shared/api/openlibrary-fetch';
+import {
+  OpenLibraryHttpError,
+  openLibraryFetch,
+  resolveOpenLibraryUrl,
+} from '@/shared/api/openlibrary-fetch';
 
 describe('openLibraryFetch', () => {
   const originalFetch = globalThis.fetch;
@@ -20,6 +24,12 @@ describe('openLibraryFetch', () => {
 
     await expect(openLibraryFetch('/search.json?q=test')).rejects.toBeInstanceOf(
       OpenLibraryHttpError,
+    );
+  });
+
+  it('forces https for relative open library path', () => {
+    expect(resolveOpenLibraryUrl('/subjects/magic.json?details=false&limit=24')).toBe(
+      'https://openlibrary.org/subjects/magic.json?details=false&limit=24',
     );
   });
 
