@@ -62,6 +62,8 @@ export const ru = {
     similarSubtitle: 'По смежной теме из Open Library.',
     similarEmptyTitle: 'Похожих пока нет',
     similarEmpty: 'У этой книги нет явной темы для подборки — попробуйте позже.',
+    similarOnlySelf:
+      'По этой теме в выдаче Open Library оказалась только эта книга — откройте каталог или другую тему.',
     reviews: 'Отзывы',
     reviewsSubtitle: 'Мнения читателей BookVerse.',
     reviewsEmptyTitle: 'Отзывов пока нет',

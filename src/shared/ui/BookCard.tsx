@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import type { BookSummary } from '@/entities/book/model/types';
 import { ru } from '@/shared/i18n';
 import { cn } from '@/shared/lib/cn';
+import { upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
 
 import { Badge } from './Badge';
 
@@ -37,7 +38,7 @@ export function BookCard({ book, className, onPrefetchDetails }: BookCardProps) 
           <div className="aspect-[3/4] overflow-hidden bg-white/5">
             {book.coverUrl ? (
               <img
-                src={book.coverUrl}
+                src={upgradeHttpToHttpsOnSecurePage(book.coverUrl) ?? book.coverUrl}
                 alt=""
                 loading="lazy"
                 className="relative z-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"

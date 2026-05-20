@@ -21,7 +21,7 @@ export function AppSidebar() {
   return (
     <aside className="hidden w-64 shrink-0 border-r border-border/60 bg-surface-elevated/30 p-4 backdrop-blur-xl lg:block">
       <div className="mb-8 flex items-center gap-3 px-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-cyan-400 text-slate-950 shadow-glow">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-cyan-400 text-slate-950 shadow-glow">
           <Compass className="h-5 w-5" aria-hidden />
         </div>
         <div>

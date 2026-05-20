@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/model/use-auth';
 import { useDeleteReview, useBookReviews } from '@/features/reviews/model/use-reviews';
 import { ru } from '@/shared/i18n';
 import { stripHtml } from '@/shared/lib/html';
+import { upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
 import { queryErrorMessage } from '@/shared/lib/query-error-message';
 import {
   Badge,
@@ -32,6 +33,12 @@ export default function BookDetailsPage() {
   const reviews = useBookReviews(bookId);
   const deleteReview = useDeleteReview(bookId);
   const { user } = useAuth();
+
+  const visibleSimilar = useMemo(() => {
+    const list = similar.data ?? [];
+    const excludeId = query.data?.id ?? bookId;
+    return list.filter((b) => b.id !== excludeId).slice(0, 12);
+  }, [similar.data, query.data?.id, bookId]);
 
   if (!bookId) {
     return <EmptyState title={ru.details.invalidIdTitle} description={ru.details.invalidIdText} />;
@@ -60,8 +67,6 @@ export default function BookDetailsPage() {
   }
 
   const plainDescription = book.description ? stripHtml(book.description) : '';
-  const similarList = similar.data ?? [];
-
   return (
     <div className="space-y-10">
       <Helmet>
@@ -86,7 +91,7 @@ export default function BookDetailsPage() {
           >
             {book.coverUrl ? (
               <img
-                src={book.coverUrl}
+                src={upgradeHttpToHttpsOnSecurePage(book.coverUrl) ?? book.coverUrl}
                 alt=""
                 className="aspect-[3/4] w-full object-cover"
                 loading="lazy"
@@ -151,16 +156,18 @@ export default function BookDetailsPage() {
             message={queryErrorMessage(similar.error)}
             onRetry={() => void similar.refetch()}
           />
-        ) : similarList.length === 0 ? (
-          <EmptyState title={ru.details.similarEmptyTitle} description={ru.details.similarEmpty} />
+        ) : visibleSimilar.length === 0 ? (
+          <EmptyState
+            title={ru.details.similarEmptyTitle}
+            description={
+              (similar.data?.length ?? 0) > 0 ? ru.details.similarOnlySelf : ru.details.similarEmpty
+            }
+          />
         ) : (
           <CarouselRow>
-            {similarList
-              .filter((b) => b.id !== book.id)
-              .slice(0, 12)
-              .map((b) => (
-                <BookCard key={b.id} book={b} />
-              ))}
+            {visibleSimilar.map((b) => (
+              <BookCard key={b.id} book={b} />
+            ))}
           </CarouselRow>
         )}
       </Section>

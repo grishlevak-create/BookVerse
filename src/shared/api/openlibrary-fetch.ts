@@ -1,4 +1,13 @@
+import { upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
+
 const OPEN_LIBRARY_ORIGIN = 'https://openlibrary.org';
+
+function resolveOpenLibraryUrl(path: string): string {
+  if (!path.startsWith('http')) {
+    return `${OPEN_LIBRARY_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
+  }
+  return upgradeHttpToHttpsOnSecurePage(path) ?? path;
+}
 
 export class OpenLibraryHttpError extends Error {
   readonly status: number;
@@ -11,9 +20,7 @@ export class OpenLibraryHttpError extends Error {
 }
 
 export async function openLibraryFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = path.startsWith('http')
-    ? path
-    : `${OPEN_LIBRARY_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
+  const url = resolveOpenLibraryUrl(path);
   const res = await fetch(url, {
     ...init,
     headers: {
