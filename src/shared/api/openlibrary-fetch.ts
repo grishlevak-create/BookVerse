@@ -1,12 +1,12 @@
-import { upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
+import { ensureOpenLibraryHttps, upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
 
 const OPEN_LIBRARY_ORIGIN = 'https://openlibrary.org';
 
 function resolveOpenLibraryUrl(path: string): string {
-  if (!path.startsWith('http')) {
-    return `${OPEN_LIBRARY_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
-  }
-  return upgradeHttpToHttpsOnSecurePage(path) ?? path;
+  const resolved = path.startsWith('http')
+    ? (upgradeHttpToHttpsOnSecurePage(path) ?? path)
+    : `${OPEN_LIBRARY_ORIGIN}${path.startsWith('/') ? '' : '/'}${path}`;
+  return ensureOpenLibraryHttps(resolved);
 }
 
 export class OpenLibraryHttpError extends Error {

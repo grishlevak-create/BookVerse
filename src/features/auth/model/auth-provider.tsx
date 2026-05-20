@@ -2,6 +2,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { AuthContext } from '@/features/auth/model/auth-context-definition';
+import { isSupabaseConfigured } from '@/shared/config/env';
 import { supabase } from '@/shared/config/supabase';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -10,6 +11,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setLoading(false);
+      return;
+    }
+
     let mounted = true;
     void supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;

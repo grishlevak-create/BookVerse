@@ -2,17 +2,21 @@ import { createClient } from '@supabase/supabase-js';
 
 import { env, isSupabaseConfigured } from '@/shared/config/env';
 
-export const supabase = createClient(
-  env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co',
-  env.VITE_SUPABASE_ANON_KEY || 'placeholder',
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
+const supabaseUrl = env.VITE_SUPABASE_URL.trim() || 'https://placeholder.supabase.co';
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY.trim() || 'placeholder';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    headers: {
+      apikey: supabaseAnonKey,
     },
   },
-);
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
 
 export function assertSupabaseConfigured(): void {
   if (!isSupabaseConfigured()) {

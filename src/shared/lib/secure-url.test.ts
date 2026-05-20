@@ -1,4 +1,4 @@
-import { upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
+import { ensureOpenLibraryHttps, upgradeHttpToHttpsOnSecurePage } from '@/shared/lib/secure-url';
 
 describe('upgradeHttpToHttpsOnSecurePage', () => {
   const origProtocol = window.location.protocol;
@@ -8,6 +8,15 @@ describe('upgradeHttpToHttpsOnSecurePage', () => {
       value: { ...window.location, protocol: origProtocol },
       configurable: true,
     });
+  });
+
+  it('forces https for openlibrary hosts', () => {
+    expect(ensureOpenLibraryHttps('http://openlibrary.org/subjects/magic.json')).toBe(
+      'https://openlibrary.org/subjects/magic.json',
+    );
+    expect(ensureOpenLibraryHttps('http://covers.openlibrary.org/b/id/1-M.jpg')).toBe(
+      'https://covers.openlibrary.org/b/id/1-M.jpg',
+    );
   });
 
   it('returns null for empty', () => {
